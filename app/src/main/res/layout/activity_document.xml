@@ -72,6 +72,13 @@
             android:layout_weight="1"
             android:text="@string/btnHandInputCaption" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnScan"
+            android:layout_weight="1"
+            android:text="@string/btnScanCaption" />
+
     </LinearLayout>
 
     <ListView

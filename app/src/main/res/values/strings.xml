@@ -4,14 +4,17 @@
     <string name="lbFtpLogin">Логин</string>
     <string name="lbFtpPassword">Пароль</string>
     <string name="lbFtpDirectory">Каталог для обмена на FTP сервере</string>
+    <string name="lbScanMode">Режим сканирования</string>
     <string name="btnSettingCaption">Настройки</string>
     <string name="btnSaveSettingCaption">Сохранить</string>
     <string name="btnAddDocumentCaption">Добавить</string>
     <string name="btnDocumentsCaption">Документы</string>
     <string name="btnDigitDelCaption">DEL</string>
+    <string name="btnScanCaption">Сканировать</string>
     <string name="lbWarehouseCaption">Склад</string>
     <string name="btnHandInputCaption">Ручной ввод</string>
     <string name="hinBarCodeEditText">штрих код</string>
     <string name="inputBarcodeText">Введите штрих-код товара</string>
     <string name="inputQtyText">Введите количество товара</string>
+    <string name="btnLoadCaption">Загрузка файла</string>
 </resources>

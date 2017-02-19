@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import obessonov.com.revisor.DAO;
 import obessonov.com.revisor.Entity;
 import obessonov.com.revisor.R;
+import obessonov.com.revisor.ScanActivity;
 import obessonov.com.revisor.Utils.Constant;
 
 public class Document extends Activity {
@@ -32,6 +33,7 @@ public class Document extends Activity {
     private Spinner  spinnerWarehouse;
     private EditText edScanInput;
     private Button   btnHandInput;
+    private Button   btnScan;
 
     private ArrayList<WareHouse> whList;
     private ArrayList<DocRow> docRows;
@@ -51,10 +53,19 @@ public class Document extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document);
 
-        lvDocRows = (ListView) findViewById(R.id.lvDocRows);
+        lvDocRows    = (ListView) findViewById(R.id.lvDocRows);
         lbDocCaption = (TextView) findViewById(R.id.lbDocCaption);
         edScanInput  = (EditText) findViewById(R.id.edScanInput);
         btnHandInput = (Button)   findViewById(R.id.btnHandInput);
+        btnScan      = (Button)   findViewById(R.id.btnScan);
+        btnScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ScanActivity.class);
+                intent.putParcelableArrayListExtra("docRows",docRows);
+                startActivity(intent);
+            }
+        });
 
         docRows = new ArrayList<>();
 
@@ -78,18 +89,6 @@ public class Document extends Activity {
         dlAdapter = new DocLineAdapter(this);
         dlAdapter.setNotifyOnChange(true);
         lvDocRows.setAdapter(dlAdapter);
-
-
-
-        btn55 = (Button) findViewById(R.id.btntest55);
-        btn55.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                edScanInput.requestFocus();
-                Log.d("LOG",String.valueOf(docRows.size()));
-            }
-        });
-
 
     }
 

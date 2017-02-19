@@ -1,8 +1,5 @@
 package obessonov.com.revisor.Documents;
 
-/**
- * Created by Администратор on 23.11.2016.
- */
 
 public class WareHouse {
     private String name;
