@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import obessonov.com.revisor.DAO;
 import obessonov.com.revisor.Entity;
 import obessonov.com.revisor.R;
-import obessonov.com.revisor.ScanActivity;
 import obessonov.com.revisor.Utils.Constant;
 
 public class Document extends Activity {
@@ -53,9 +51,12 @@ public class Document extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document);
 
+        docRows = new ArrayList<DocRow>();
+
         lvDocRows    = (ListView) findViewById(R.id.lvDocRows);
         lbDocCaption = (TextView) findViewById(R.id.lbDocCaption);
         edScanInput  = (EditText) findViewById(R.id.edScanInput);
+
         btnHandInput = (Button)   findViewById(R.id.btnHandInput);
         btnScan      = (Button)   findViewById(R.id.btnScan);
         btnScan.setOnClickListener(new View.OnClickListener() {
@@ -63,11 +64,11 @@ public class Document extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ScanActivity.class);
                 intent.putParcelableArrayListExtra("docRows",docRows);
-                startActivity(intent);
+                startActivityForResult(intent,Constant.CALL_SCAN_ACTIVITY);
             }
         });
 
-        docRows = new ArrayList<>();
+
 
         edScanInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -87,7 +88,7 @@ public class Document extends Activity {
         initSpinnerWareHouse();
 
         dlAdapter = new DocLineAdapter(this);
-        dlAdapter.setNotifyOnChange(true);
+        //dlAdapter.setNotifyOnChange(true);
         lvDocRows.setAdapter(dlAdapter);
 
     }
@@ -120,7 +121,6 @@ public class Document extends Activity {
             docRow.setEntity(entity);
             startActivityForResult(intent, Constant.CALL_DIGITALINPUT_FOR_QTY);
         }
-
     }
 
     private void handAddEntity(){
@@ -135,6 +135,7 @@ public class Document extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(data == null) {return;}
+
 
         if(requestCode == Constant.CALL_DIGITALINPUT_FOR_BARCODE) {
             if(resultCode == RESULT_OK) {
@@ -154,15 +155,27 @@ public class Document extends Activity {
                 }
 
                 if(qty > 0.0) {
+                    docRow.setRowNo(docRows.size()+1);
                     docRow.setQty(qty);
-                    dlAdapter.add(docRow);
+                    docRows.add(docRow);
+                    dlAdapter.notifyDataSetChanged();
                 }
 
                 if(!edScanInput.isFocused()) {
                     edScanInput.requestFocus();
                 }
-
         }
+
+        if(requestCode == Constant.CALL_SCAN_ACTIVITY){
+            if(resultCode == RESULT_OK) {
+                Log.d("REVISOR_LOG","update adapter");
+                Log.d("REVISOR_LOG","Size before update = " + String.valueOf(docRows.size()));
+                docRows = data.getParcelableArrayListExtra("docRows");
+                Log.d("REVISOR_LOG","Size after update = " + String.valueOf(docRows.size()));
+                dlAdapter.notifyDataSetChanged();
+            }
+        }
+
     }
 
     public void recalc() {

@@ -32,7 +32,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity android:name=".Documents.Document" />
-        <activity android:name=".ScanActivity"></activity>
+        <activity android:name=".Documents.ScanActivity"></activity>
     </application>
 
 </manifest>

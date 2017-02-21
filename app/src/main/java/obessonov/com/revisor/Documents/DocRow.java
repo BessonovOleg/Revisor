@@ -4,6 +4,7 @@ package obessonov.com.revisor.Documents;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import obessonov.com.revisor.Entity;
 
@@ -38,6 +39,7 @@ public class DocRow implements Parcelable {
 
 
     public DocRow(){
+        super();
     }
 
     //ParcelConstructor
@@ -46,6 +48,7 @@ public class DocRow implements Parcelable {
                rowNo  = bundle.getInt("rowNo");
                qty    = bundle.getDouble("qty");
                entity = bundle.getParcelable("entity");
+
     }
 
     @Override
@@ -57,16 +60,16 @@ public class DocRow implements Parcelable {
     public void writeToParcel(Parcel parcel, int flags) {
         Bundle bundle = new Bundle();
         bundle.putInt("rowNo",rowNo);
-        bundle.putParcelable("entity",entity);
         bundle.putDouble("qty",qty);
+        bundle.putParcelable("entity",entity);
         parcel.writeBundle(bundle);
     }
 
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
+    public static final Parcelable.Creator<DocRow> CREATOR = new Parcelable.Creator<DocRow>(){
         @Override
-        public DocRow createFromParcel(Parcel in) {
-            return new DocRow(in);
+        public DocRow createFromParcel(Parcel inp) {
+            return new DocRow(inp);
         }
 
         @Override

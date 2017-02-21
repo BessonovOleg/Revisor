@@ -75,7 +75,7 @@ public class Entity implements Parcelable{
         parcel.writeBundle(bundle);
     }
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
+    public static final Parcelable.Creator<Entity> CREATOR = new Parcelable.Creator<Entity>(){
         @Override
         public Entity createFromParcel(Parcel in) {
             return new Entity(in);
