@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,8 @@ public class ScanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         edScanCode = (EditText) findViewById(R.id.edScanCode);
         edScanCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -38,10 +41,7 @@ public class ScanActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        Intent intent = getIntent();
-        docRows = intent.getParcelableArrayListExtra("docRows");
-
+        docRows = new ArrayList<>();
     }
 
     private void addEntity(String barcode) {
@@ -54,9 +54,11 @@ public class ScanActivity extends AppCompatActivity {
             String inputText = entity.getEnt_name();
             intent.putExtra(Constant.CAPTION_DIGITAL_INPUT, inputText);
             intent.putExtra(Constant.DIGITALINPUT_REQUEST_CODE, Constant.CALL_DIGITALINPUT_FOR_QTY);
+            docRow.setEntID(entity.getEnt_id());
             startActivityForResult(intent, Constant.CALL_DIGITALINPUT_FOR_QTY);
+        }else {
+            Toast.makeText(this,R.string.msg_EntityNotFound,Toast.LENGTH_SHORT).show();
         }
-
     }
 
 

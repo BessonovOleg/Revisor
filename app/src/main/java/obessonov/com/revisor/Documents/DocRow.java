@@ -1,24 +1,29 @@
 package obessonov.com.revisor.Documents;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import obessonov.com.revisor.DAO;
 import obessonov.com.revisor.Entity;
+
 
 public class DocRow implements Parcelable {
     private Integer rowNo;
-    private Entity entity;
+    private Integer entID;
     private Double qty;
+    private Entity entity;
 
     public void setRowNo(Integer rowNo) {
         this.rowNo = rowNo;
     }
 
-    public void setEntity(Entity entity) {
-        this.entity = entity;
+    public void setEntity(int ID, Context ctx) {
+        entity = new Entity(ID,ctx);
     }
 
     public void setQty(Double qty) {
@@ -29,8 +34,12 @@ public class DocRow implements Parcelable {
         return rowNo;
     }
 
-    public Entity getEntity() {
-        return entity;
+    public Integer getEntID() {
+        return entID;
+    }
+
+    public void setEntID(Integer id){
+        this.entID = id;
     }
 
     public Double getQty() {
@@ -40,6 +49,13 @@ public class DocRow implements Parcelable {
 
     public DocRow(){
         super();
+        rowNo = 0;
+        qty = 0.0;
+        entID = 0;
+    }
+
+    public Entity getEntity(){
+        return this.entity;
     }
 
     //ParcelConstructor
@@ -47,8 +63,7 @@ public class DocRow implements Parcelable {
         Bundle bundle = parcel.readBundle();
                rowNo  = bundle.getInt("rowNo");
                qty    = bundle.getDouble("qty");
-               entity = bundle.getParcelable("entity");
-
+               entID  = bundle.getInt("entID");
     }
 
     @Override
@@ -61,7 +76,7 @@ public class DocRow implements Parcelable {
         Bundle bundle = new Bundle();
         bundle.putInt("rowNo",rowNo);
         bundle.putDouble("qty",qty);
-        bundle.putParcelable("entity",entity);
+        bundle.putInt("entID",entID);
         parcel.writeBundle(bundle);
     }
 
@@ -78,4 +93,16 @@ public class DocRow implements Parcelable {
         }
     };
 
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Qty=");
+        sb.append(qty);
+        sb.append(" RowNo=");
+        sb.append(rowNo);
+        sb.append(" EntID = ");
+        sb.append(entID);
+        return sb.toString();
+    }
 }

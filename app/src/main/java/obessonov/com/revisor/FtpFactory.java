@@ -4,6 +4,7 @@ package obessonov.com.revisor;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -61,6 +62,7 @@ public class FtpFactory {
             mFTPClient.disconnect();
             return true;
         } catch (Exception e) {
+
             Log.d(TAG, "Error occurred while disconnecting from ftp server.");
         }
 

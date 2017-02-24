@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:columnCount="4"
-    tools:context="obessonov.com.revisor.Documents.DigitalInputActivity">
+    android:orientation="vertical"
+    tools:context="obessonov.com.revisor.Documents.DigitalInputActivity"
+    >
 
     <TextView
         android:layout_gravity="fill"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvCaptionDigitalInput"
-        android:layout_columnSpan="4"
-        android:textSize="24sp" />
+        android:textSize="22sp" />
 
     <TextView
         android:layout_gravity="fill"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvDigitResult"
-        android:layout_columnSpan="4"
         android:textSize="24sp" />
+
+
+<GridLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_weight="1"
+    android:columnCount="4">
+
 
     <Button
         android:text="1"
@@ -74,6 +81,7 @@
         android:id="@+id/btnDigit6" />
 
     <Button
+        android:layout_columnWeight="1"
         android:text="OK"
         android:layout_gravity="fill"
         android:layout_width="wrap_content"
@@ -121,5 +129,4 @@
 </GridLayout>
 
 
-
-
+</LinearLayout>

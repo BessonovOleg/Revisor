@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button   btnParse;
     Button   btnDDD;
     Button   button2;
+
+    Button btnTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnDDD = (Button) findViewById(R.id.btnDDD);
         btnDDD.setOnClickListener(this);
 
+
+
 /*
        edtest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -72,6 +78,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         button2 = (Button) findViewById(R.id.button2);
         button2.setOnClickListener(this);
+
+        btnTest = (Button) findViewById(R.id.btnTest);
+        btnTest.setOnClickListener(this);
 
     }
 
@@ -95,7 +104,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button2:
                 test2();
                 break;
+            case R.id.btnTest:
+                testtest();
+                break;
         }
+    }
+
+    public void testtest(){
+        Toast.makeText(getApplicationContext(),"test",Toast.LENGTH_SHORT).show();
+        Log.d("LOG","LOLOLOLOLOOOLOLOLOLOOLOLOLOLOL");
+        Log.i("LOG","123123123123123");
     }
 
     public void dddClick(){
@@ -120,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intentSetting = new Intent(this,SettingActivity.class);
         startActivity(intentSetting);
     }
+
+
 
 
     public void test2() {
@@ -239,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String str = "";
 
                 while ((str = br.readLine()) != null) {
+                    Log.d("LOG",str);
                     dao.insertEntity(str);
                     publishProgress(2);
                 }

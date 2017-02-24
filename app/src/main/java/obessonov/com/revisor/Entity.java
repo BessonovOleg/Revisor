@@ -1,5 +1,6 @@
 package obessonov.com.revisor;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -17,6 +18,17 @@ public class Entity implements Parcelable{
          ent_name = "";
          barcode = "";
     }
+
+    public Entity(Integer EntID,Context ctx){
+        Entity tmpEntity;
+        DAO dao = new DAO(ctx);
+        tmpEntity = dao.getEntitByID(EntID);
+        this.setBarcode(tmpEntity.getBarcode());
+        this.setEnt_guid(tmpEntity.getEnt_guid());
+        this.setEnt_id(tmpEntity.getEnt_id());
+        this.setEnt_name(tmpEntity.getEnt_name());
+    }
+
 
     public void setEnt_id(Integer ent_id) {
         this.ent_id = ent_id;

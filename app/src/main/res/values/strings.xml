@@ -17,4 +17,11 @@
     <string name="inputBarcodeText">Введите штрих-код товара</string>
     <string name="inputQtyText">Введите количество товара</string>
     <string name="btnLoadCaption">Загрузка файла</string>
+    <string name="msg_EntityNotFound">Товар не найден!</string>
+    <string name="cnx_menu_delete">Удалить</string>
+    <string name="cnx_menu_change">Изменить</string>
+    <string name="dialog_caption">Внимание!</string>
+    <string name="dialog_btn_yes">Да</string>
+    <string name="dialog_btn_no">Нет</string>
+    <string name="dialog_text">Удалить строку?</string>
 </resources>

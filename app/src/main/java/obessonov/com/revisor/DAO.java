@@ -273,6 +273,39 @@ public class DAO {
     }
 
 
+    public Entity getEntitByID(Integer id){
+        Entity res = new Entity();
+
+        String table = "Entities";
+        String columns[] = {"_id","ent_guid","ent_name","barcode"};
+        String selection = "_id = ?";
+        String[] selectionArgs = {id.toString()};
+        Cursor c = db.query(table, columns, selection, selectionArgs, null, null, null);
+
+
+        if (c.moveToFirst()) {
+            int idColIndex      = c.getColumnIndex("_id");
+            int guidColIndex    = c.getColumnIndex("ent_guid");
+            int nameColIndex    = c.getColumnIndex("ent_name");
+            int barcodeColIndex = c.getColumnIndex("barcode");
+
+            do {
+                res.setEnt_id(c.getInt(idColIndex));
+                res.setEnt_guid(c.getString(guidColIndex));
+                res.setEnt_name(c.getString(nameColIndex));
+                res.setBarcode(c.getString(barcodeColIndex));
+            } while (c.moveToNext());
+        } else {
+            c.close();
+        }
+
+        return res;
+    }
+
+
+
+
+
     class DbHelper extends SQLiteOpenHelper {
 
         public DbHelper(Context context) {

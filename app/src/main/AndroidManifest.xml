@@ -31,8 +31,10 @@
             android:name=".Documents.DigitalInputActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
-        <activity android:name=".Documents.Document" />
-        <activity android:name=".Documents.ScanActivity"></activity>
+        <activity android:name=".Documents.Document"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Documents.ScanActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

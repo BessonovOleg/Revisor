@@ -1,21 +1,28 @@
 package obessonov.com.revisor.Documents;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -29,7 +36,6 @@ public class Document extends Activity {
     private String   docCaption;
     private TextView lbDocCaption;
     private Spinner  spinnerWarehouse;
-    private EditText edScanInput;
     private Button   btnHandInput;
     private Button   btnScan;
 
@@ -42,40 +48,29 @@ public class Document extends Activity {
 
     private DocRow docRow;
 
-    private Button btn55;
     private ArrayAdapter<DocRow> dlAdapter;
 
+    private static int selected_position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_document);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         docRows = new ArrayList<DocRow>();
 
         lvDocRows    = (ListView) findViewById(R.id.lvDocRows);
         lbDocCaption = (TextView) findViewById(R.id.lbDocCaption);
-        edScanInput  = (EditText) findViewById(R.id.edScanInput);
 
         btnHandInput = (Button)   findViewById(R.id.btnHandInput);
         btnScan      = (Button)   findViewById(R.id.btnScan);
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ScanActivity.class);
+                Intent intent = new Intent(getBaseContext(), ScanActivity.class);
                 intent.putParcelableArrayListExtra("docRows",docRows);
                 startActivityForResult(intent,Constant.CALL_SCAN_ACTIVITY);
-            }
-        });
-
-
-
-        edScanInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                addEntity(edScanInput.getText().toString());
-                edScanInput.setText("");
-                return true;
             }
         });
 
@@ -88,9 +83,8 @@ public class Document extends Activity {
         initSpinnerWareHouse();
 
         dlAdapter = new DocLineAdapter(this);
-        //dlAdapter.setNotifyOnChange(true);
         lvDocRows.setAdapter(dlAdapter);
-
+        registerForContextMenu(lvDocRows);
     }
 
     public void initSpinnerWareHouse(){
@@ -118,7 +112,7 @@ public class Document extends Activity {
             String inputText = entity.getEnt_name();
             intent.putExtra(Constant.CAPTION_DIGITAL_INPUT, inputText);
             intent.putExtra(Constant.DIGITALINPUT_REQUEST_CODE, Constant.CALL_DIGITALINPUT_FOR_QTY);
-            docRow.setEntity(entity);
+            docRow.setEntity(entity.getEnt_id(),getApplicationContext());
             startActivityForResult(intent, Constant.CALL_DIGITALINPUT_FOR_QTY);
         }
     }
@@ -135,7 +129,6 @@ public class Document extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if(data == null) {return;}
-
 
         if(requestCode == Constant.CALL_DIGITALINPUT_FOR_BARCODE) {
             if(resultCode == RESULT_OK) {
@@ -160,26 +153,30 @@ public class Document extends Activity {
                     docRows.add(docRow);
                     dlAdapter.notifyDataSetChanged();
                 }
-
-                if(!edScanInput.isFocused()) {
-                    edScanInput.requestFocus();
-                }
         }
 
         if(requestCode == Constant.CALL_SCAN_ACTIVITY){
             if(resultCode == RESULT_OK) {
-                Log.d("REVISOR_LOG","update adapter");
-                Log.d("REVISOR_LOG","Size before update = " + String.valueOf(docRows.size()));
-                docRows = data.getParcelableArrayListExtra("docRows");
-                Log.d("REVISOR_LOG","Size after update = " + String.valueOf(docRows.size()));
+//                docRows.clear();
+                DocRow tmpDocRow;
+                    ArrayList<DocRow> tmpdocRows = data.getParcelableArrayListExtra("docRows");
+
+                    for (DocRow d:tmpdocRows){
+                        tmpDocRow = new DocRow();
+                        tmpDocRow.setEntID(d.getEntID());
+                        tmpDocRow.setRowNo(docRows.size()+1);
+                        tmpDocRow.setQty(d.getQty());
+                        tmpDocRow.setEntity(d.getEntID(),getApplicationContext());
+                        docRows.add(tmpDocRow);
+                    }
+
+                    Log.d("LOG",String.valueOf(tmpdocRows.size()));
+
                 dlAdapter.notifyDataSetChanged();
+                Log.d("LOG","Result ok)");
             }
         }
 
-    }
-
-    public void recalc() {
-        lbDocCaption.setText(docCaption);
     }
 
 
@@ -195,16 +192,63 @@ public class Document extends Activity {
             if(convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_2,null);
             }
-
             ((TextView) convertView.findViewById(android.R.id.text1)).setText(dr.getEntity().getEnt_name());
             ((TextView) convertView.findViewById(android.R.id.text2)).setText(dr.getQty().toString());
-
             return convertView;
             //return super.getView(position, convertView, parent);
         }
     }
 
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add(0,Constant.DOC_MENU_CHANGE_ROW,0,R.string.cnx_menu_change);
+        menu.add(0,Constant.DOC_MENU_DELETE_ROW,0,R.string.cnx_menu_delete);
+        Log.d("LOG","Вызов меню");
+        //super.onCreateContextMenu(menu, v, menuInfo);
+    }
 
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        //Удалить строку
+        Log.d("LOG","Listening...");
+        if(item.getItemId() == Constant.DOC_MENU_DELETE_ROW){
+            Log.d("LOG","delete1");
+            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            Toast.makeText(this,"DELETE!!",Toast.LENGTH_SHORT);
+            deleteRow(acmi.position);
+            return true;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+
+    public void deleteRow(int pos){
+        Log.d("LOG","delete 2");
+
+        Log.d("LOG","delete 2");
+        selected_position = pos;
+        AlertDialog.Builder dlg = new AlertDialog.Builder(this);
+        dlg.setTitle(R.string.dialog_caption);
+        dlg.setMessage(R.string.dialog_text);
+        dlg.setPositiveButton(R.string.dialog_btn_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // удаляем из коллекции, используя позицию пункта в списке
+                if(selected_position >= 0){
+                    docRows.remove(selected_position);
+                    // уведомляем, что данные изменились
+                    dlAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        dlg.setNegativeButton(R.string.dialog_btn_no,null);
+        dlg.setCancelable(true);
+
+        dlg.show();
+    }
 
 }
+
