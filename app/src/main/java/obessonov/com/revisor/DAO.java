@@ -3,6 +3,7 @@ package obessonov.com.revisor;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -186,6 +187,39 @@ public class DAO {
 
         return result;
     }
+
+
+    //Document
+    public DocumentTitle getDocumentTitle(Integer docid){
+        DocumentTitle result = new DocumentTitle();
+
+        String table = "Documents";
+        String columns[] = {"doc_date","doc_no","doc_ag_guid","doc_state"};
+        String selection = "_id = ?";
+        String[] selectionArgs = {docid.toString()};
+        Cursor c = db.query(table, columns, selection, selectionArgs, null, null, null);
+
+        if (c.moveToFirst()) {
+            int docDcateColIndex  = c.getColumnIndex("doc_date");
+            int docNoColIndex     = c.getColumnIndex("doc_no");
+            int docAgGuidColIndex = c.getColumnIndex("doc_ag_guid");
+            int docStateColIndex   = c.getColumnIndex("doc_state");
+
+            do {
+                result.setDoc_date(c.getString(docDcateColIndex));
+                result.setDoc_id(docid);
+                result.setDoc_state(c.getString(docStateColIndex));
+            } while (c.moveToNext());
+        } else {
+            c.close();
+        }
+
+
+
+
+        return result;
+    }
+
 
     //Warehouse
     public ArrayList<WareHouse> getWareHouses() {

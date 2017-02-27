@@ -38,6 +38,7 @@ public class Document extends Activity {
     private Spinner  spinnerWarehouse;
     private Button   btnHandInput;
     private Button   btnScan;
+    private Integer  docID;
 
     private ArrayList<WareHouse> whList;
     private ArrayList<DocRow> docRows;
@@ -60,10 +61,13 @@ public class Document extends Activity {
 
         docRows = new ArrayList<DocRow>();
 
+        Intent intent = getIntent();
+        docID = intent.getIntExtra("DOCID",0);
+        loadDocument();
+
         lvDocRows    = (ListView) findViewById(R.id.lvDocRows);
         lbDocCaption = (TextView) findViewById(R.id.lbDocCaption);
 
-        btnHandInput = (Button)   findViewById(R.id.btnHandInput);
         btnScan      = (Button)   findViewById(R.id.btnScan);
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,13 +78,16 @@ public class Document extends Activity {
             }
         });
 
+        btnHandInput = (Button)   findViewById(R.id.btnHandInput);
         btnHandInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 handAddEntity();
             }
         });
+
         initSpinnerWareHouse();
+
 
         dlAdapter = new DocLineAdapter(this);
         lvDocRows.setAdapter(dlAdapter);
@@ -157,7 +164,6 @@ public class Document extends Activity {
 
         if(requestCode == Constant.CALL_SCAN_ACTIVITY){
             if(resultCode == RESULT_OK) {
-//                docRows.clear();
                 DocRow tmpDocRow;
                     ArrayList<DocRow> tmpdocRows = data.getParcelableArrayListExtra("docRows");
 
@@ -169,11 +175,7 @@ public class Document extends Activity {
                         tmpDocRow.setEntity(d.getEntID(),getApplicationContext());
                         docRows.add(tmpDocRow);
                     }
-
-                    Log.d("LOG",String.valueOf(tmpdocRows.size()));
-
                 dlAdapter.notifyDataSetChanged();
-                Log.d("LOG","Result ok)");
             }
         }
 
@@ -195,7 +197,6 @@ public class Document extends Activity {
             ((TextView) convertView.findViewById(android.R.id.text1)).setText(dr.getEntity().getEnt_name());
             ((TextView) convertView.findViewById(android.R.id.text2)).setText(dr.getQty().toString());
             return convertView;
-            //return super.getView(position, convertView, parent);
         }
     }
 
@@ -204,7 +205,6 @@ public class Document extends Activity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         menu.add(0,Constant.DOC_MENU_CHANGE_ROW,0,R.string.cnx_menu_change);
         menu.add(0,Constant.DOC_MENU_DELETE_ROW,0,R.string.cnx_menu_delete);
-        Log.d("LOG","Вызов меню");
         //super.onCreateContextMenu(menu, v, menuInfo);
     }
 
@@ -212,11 +212,8 @@ public class Document extends Activity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         //Удалить строку
-        Log.d("LOG","Listening...");
         if(item.getItemId() == Constant.DOC_MENU_DELETE_ROW){
-            Log.d("LOG","delete1");
             AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Toast.makeText(this,"DELETE!!",Toast.LENGTH_SHORT);
             deleteRow(acmi.position);
             return true;
         }
@@ -226,9 +223,6 @@ public class Document extends Activity {
 
 
     public void deleteRow(int pos){
-        Log.d("LOG","delete 2");
-
-        Log.d("LOG","delete 2");
         selected_position = pos;
         AlertDialog.Builder dlg = new AlertDialog.Builder(this);
         dlg.setTitle(R.string.dialog_caption);
@@ -246,9 +240,19 @@ public class Document extends Activity {
         });
         dlg.setNegativeButton(R.string.dialog_btn_no,null);
         dlg.setCancelable(true);
-
         dlg.show();
     }
+
+
+
+    private void loadDocument(){
+        if (docID == 0) return;
+        //Загрузка шапки
+        DAO dao = new DAO(this);
+
+
+    }
+
 
 }
 
