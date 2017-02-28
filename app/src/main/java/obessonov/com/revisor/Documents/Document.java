@@ -24,7 +24,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import obessonov.com.revisor.DAO;
 import obessonov.com.revisor.Entity;
@@ -33,12 +36,11 @@ import obessonov.com.revisor.Utils.Constant;
 
 public class Document extends Activity {
 
-    private String   docCaption;
     private TextView lbDocCaption;
     private Spinner  spinnerWarehouse;
     private Button   btnHandInput;
     private Button   btnScan;
-    private Integer  docID;
+    private Long docID;
 
     private ArrayList<WareHouse> whList;
     private ArrayList<DocRow> docRows;
@@ -52,6 +54,7 @@ public class Document extends Activity {
     private ArrayAdapter<DocRow> dlAdapter;
 
     private static int selected_position;
+    private DocumentTitle docTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +62,16 @@ public class Document extends Activity {
         setContentView(R.layout.activity_document);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        docTitle = new DocumentTitle();
         docRows = new ArrayList<DocRow>();
 
         Intent intent = getIntent();
-        docID = intent.getIntExtra("DOCID",0);
+        docID = intent.getLongExtra(Constant.DOC_ID,0);
         loadDocument();
 
         lvDocRows    = (ListView) findViewById(R.id.lvDocRows);
         lbDocCaption = (TextView) findViewById(R.id.lbDocCaption);
+        lbDocCaption.setText(docTitle.getDoc_date());
 
         btnScan      = (Button)   findViewById(R.id.btnScan);
         btnScan.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +97,7 @@ public class Document extends Activity {
         dlAdapter = new DocLineAdapter(this);
         lvDocRows.setAdapter(dlAdapter);
         registerForContextMenu(lvDocRows);
+
     }
 
     public void initSpinnerWareHouse(){
@@ -243,12 +249,27 @@ public class Document extends Activity {
         dlg.show();
     }
 
-
-
     private void loadDocument(){
-        if (docID == 0) return;
-        //Загрузка шапки
         DAO dao = new DAO(this);
+
+        if (docID == 0) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = new Date();
+
+            docTitle.setDoc_date(dateFormat.format(date));
+            docTitle.getDoc_no();
+            docTitle.setDoc_no(String.valueOf(dao.getMaxDocID()+1));
+            return;
+        }
+        //Загрузка шапки
+        docTitle = dao.getDocumentTitle(docID);
+    }
+
+
+    private void saveDocument(){
+        DAO dao = new DAO(this);
+        docID = dao.updateDocumentTitle(docTitle,docID);
+
 
 
     }

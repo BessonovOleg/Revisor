@@ -10,4 +10,5 @@ public class Constant {
     public static final String PCL_DOC_ROWS = "doc_rows" ;
     public static final int DOC_MENU_DELETE_ROW = 1;
     public static final int DOC_MENU_CHANGE_ROW = 2;
+    public static final String DOC_ID = "DOC_ID";
 }
